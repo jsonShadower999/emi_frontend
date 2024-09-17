@@ -9,9 +9,10 @@ const Emicalcdashboard = () => {
   const [showPersonalPopup, setShowPersonalPopup] = useState(false);
   const [showDocumentPopup, setShowDocumentPopup] = useState(false);
   const [enrollmentData, setEnrollmentData] = useState({
-    name: '', address: '', pincode: '', mobile_no: '', email: '', adhar_card: null, pan_card: null,
+    name: '', address: '', pincode: '', mobile: '', email: '', adhar_card: null, pan_card: null,intrest_rate:'',loan_amount:'',tenure:''
   });
 
+  // Calculate EMI
   const calculateEMI = async () => {
     try {
       const response = await axios.post('http://localhost:8000/api/emi_info/', {
@@ -24,17 +25,25 @@ const Emicalcdashboard = () => {
       console.error('Error calculating EMI:', error);
     }
   };
+
+  // Handle form data for enrollment and file upload
   const handleEnrollmentSubmit = async () => {
     const formData = new FormData();
     
-    // Append all the data without arrays
+    // Append all enrollment data to the FormData object
     formData.append('name', enrollmentData.name);
     formData.append('address', enrollmentData.address);
     formData.append('pincode', enrollmentData.pincode);
-    formData.append('mobile_no', enrollmentData.mobile_no);
+    formData.append('mobile', enrollmentData.mobile_no);
     formData.append('email', enrollmentData.email);
-    formData.append('adhar_card', enrollmentData.adhar_card); // assuming file is handled correctly
-    formData.append('pan_card', enrollmentData.pan_card);     // assuming file is handled correctly
+    
+    // Append file uploads
+    formData.append('adhar_card', enrollmentData.adhar_card);
+    formData.append('pan_card', enrollmentData.pan_card);
+    formData.append('mobile', enrollmentData.mobile_no);
+    formData.append('intrest_rate', interestRate);
+    formData.append('loan_amount', loanAmount);
+    formData.append('tenure', tenure);
     
     try {
       const response = await axios.post('http://localhost:8000/api/enroller_client/', formData, {
@@ -42,30 +51,18 @@ const Emicalcdashboard = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      
+
       if (response.status === 200) {
         alert('Enrollment Submitted Successfully!');
+        setShowDocumentPopup(false); // Close the popup after submission
       }
     } catch (error) {
       console.error('Error submitting form:', error);
       alert('Error in form submission');
     }
   };
-  
-//   const handleEnrollmentSubmit = async () => {
-//     try {
-//       const formData = new FormData();
-//       for (let key in enrollmentData) {
-//         formData.append(key, enrollmentData[key]);
-//       }
-//       await axios.post('http://localhost:8000/api/enroller_client/', formData);
-//       alert('Enrollment Submitted Successfully!');
-//       setShowDocumentPopup(false); // Close the popup after submission
-//     } catch (error) {
-//       console.error('Error submitting enrollment:', error);
-//     }
-//   };
 
+  // Handle file input change (for Aadhar and PAN cards)
   const handleFileChange = (e) => {
     setEnrollmentData({ ...enrollmentData, [e.target.name]: e.target.files[0] });
   };
@@ -99,7 +96,7 @@ const Emicalcdashboard = () => {
           <p>EMI: {emiDetails.emi}</p>
           <p>Total Amount: {emiDetails.total_amt}</p>
           <p>Interest Amount: {emiDetails.interest_amt}</p>
-          <p>Principle Amount: {emiDetails.principal_amt}</p>
+          <p>Principal Amount: {emiDetails.principal_amt}</p>
           <button onClick={() => setShowPersonalPopup(true)}>Get Enroll</button>
         </div>
       )}
@@ -123,9 +120,9 @@ const Emicalcdashboard = () => {
             onChange={(e) => setEnrollmentData({ ...enrollmentData, pincode: e.target.value })}
           />
           <input
-            type="text"
+            type="number"
             placeholder="Mobile Number"
-            onChange={(e) => setEnrollmentData({ ...enrollmentData, mobile_no: e.target.value })}
+            onChange={(e) => setEnrollmentData({ ...enrollmentData, mobile: e.target.value })}
           />
           <input
             type="email"
