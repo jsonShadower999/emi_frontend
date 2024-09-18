@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import './Emicalcdashboard.css'; // Assuming you already imported your CSS here
 
 const Emicalcdashboard = () => {
   const [loanAmount, setLoanAmount] = useState('');
@@ -12,6 +13,7 @@ const Emicalcdashboard = () => {
   const [country, setCountry] = useState('');
   const [postOfficeName, setPostOfficeName] = useState('');
   const [data, setData] = useState([]);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
 
   const [enrollmentData, setEnrollmentData] = useState({
     name: '',
@@ -24,10 +26,9 @@ const Emicalcdashboard = () => {
     intrest_rate: '',
     loan_amount: '',
     tenure: '',
-    city:'',
-    country:'',
-    post_office_name:''
-   
+    city: '',
+    country: '',
+    post_office_name: ''
   });
 
   // Fetch the data from the local JSON file
@@ -91,10 +92,9 @@ const Emicalcdashboard = () => {
     formData.append('intrest_rate', interestRate);
     formData.append('loan_amount', loanAmount);
     formData.append('tenure', tenure);
-   
-    formData.append('city',city);
-    formData.append('country',country);
-    formData.append('post_office_name',postOfficeName)
+    formData.append('city', city);
+    formData.append('country', country);
+    formData.append('post_office_name', postOfficeName);
 
     try {
       const response = await axios.post('http://localhost:8000/api/enroller_client/', formData, {
@@ -103,9 +103,33 @@ const Emicalcdashboard = () => {
         },
       });
 
-      if (response.status === 200) {
-        alert('Enrollment Submitted Successfully!');
-        setShowDocumentPopup(false); // Close the popup after submission
+      if (response.status === 201) {
+        console.log("the response status is ",response.status);
+
+        setShowSuccessPopup(true); // Show success popup
+         setShowDocumentPopup(false); // Close the document popup after submission
+
+        // Optional: Reset form fields after successful submission
+        setEnrollmentData({
+          name: '',
+          address: '',
+          pincode: '',
+          mobile: '',
+          email: '',
+          adhar_card: null,
+          pan_card: null,
+          intrest_rate: '',
+          loan_amount: '',
+          tenure: '',
+          city: '',
+          country: '',
+          post_office_name: ''
+        });
+
+        // Automatically close success popup after 2 seconds
+        setTimeout(() => {
+          setShowSuccessPopup(false);
+        }, 2000);
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -142,7 +166,7 @@ const Emicalcdashboard = () => {
       <button onClick={calculateEMI}>Submit</button>
 
       {emiDetails && (
-        <div>
+        <div className="emi-details">
           <h3>EMI Details</h3>
           <p>EMI: {emiDetails.emi}</p>
           <p>Total Amount: {emiDetails.total_amt}</p>
@@ -209,6 +233,14 @@ const Emicalcdashboard = () => {
           <input type="file" name="adhar_card" onChange={handleFileChange} />
           <input type="file" name="pan_card" onChange={handleFileChange} />
           <button onClick={handleEnrollmentSubmit}>Submit</button>
+        </div>
+      )}
+
+      {showSuccessPopup && (
+        <div className="popup">
+          <h3>Success</h3>
+          <p>Your enrollment has been successfully submitted!</p>
+          <button onClick={() => setShowSuccessPopup(false)}>Close</button>
         </div>
       )}
     </div>
