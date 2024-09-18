@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const Emicalcdashboard = () => {
@@ -8,9 +8,57 @@ const Emicalcdashboard = () => {
   const [emiDetails, setEmiDetails] = useState(null);
   const [showPersonalPopup, setShowPersonalPopup] = useState(false);
   const [showDocumentPopup, setShowDocumentPopup] = useState(false);
+  const [city, setCity] = useState('');
+  const [country, setCountry] = useState('');
+  const [postOfficeName, setPostOfficeName] = useState('');
+  const [data, setData] = useState([]);
+
   const [enrollmentData, setEnrollmentData] = useState({
-    name: '', address: '', pincode: '', mobile: '', email: '', adhar_card: null, pan_card: null,intrest_rate:'',loan_amount:'',tenure:''
+    name: '',
+    address: '',
+    pincode: '',
+    mobile: '',
+    email: '',
+    adhar_card: null,
+    pan_card: null,
+    intrest_rate: '',
+    loan_amount: '',
+    tenure: '',
+    city:'',
+    country:'',
+    post_office_name:''
+   
   });
+
+  // Fetch the data from the local JSON file
+  useEffect(() => {
+    fetch('/data.json') // Correct path to the public folder
+      .then((response) => response.json())
+      .then((jsonData) => {
+        setData(jsonData);
+      })
+      .catch((error) => {
+        console.error('Error loading data:', error);
+      });
+  }, []);
+
+  const handlePincodeChange = (e) => {
+    const enteredPincode = e.target.value;
+    setEnrollmentData({ ...enrollmentData, pincode: enteredPincode });
+
+    // Find the data corresponding to the entered pincode
+    const location = data.find((item) => item.pincode === enteredPincode);
+
+    if (location) {
+      setCity(location.city);
+      setCountry(location.country);
+      setPostOfficeName(location.postOfficeName);
+    } else {
+      setCity('');
+      setCountry('');
+      setPostOfficeName('');
+    }
+  };
 
   // Calculate EMI
   const calculateEMI = async () => {
@@ -29,22 +77,25 @@ const Emicalcdashboard = () => {
   // Handle form data for enrollment and file upload
   const handleEnrollmentSubmit = async () => {
     const formData = new FormData();
-    
+
     // Append all enrollment data to the FormData object
     formData.append('name', enrollmentData.name);
     formData.append('address', enrollmentData.address);
     formData.append('pincode', enrollmentData.pincode);
-    formData.append('mobile', enrollmentData.mobile_no);
+    formData.append('mobile', enrollmentData.mobile);
     formData.append('email', enrollmentData.email);
-    
+
     // Append file uploads
     formData.append('adhar_card', enrollmentData.adhar_card);
     formData.append('pan_card', enrollmentData.pan_card);
-    formData.append('mobile', enrollmentData.mobile_no);
     formData.append('intrest_rate', interestRate);
     formData.append('loan_amount', loanAmount);
     formData.append('tenure', tenure);
-    
+   
+    formData.append('city',city);
+    formData.append('country',country);
+    formData.append('post_office_name',postOfficeName)
+
     try {
       const response = await axios.post('http://localhost:8000/api/enroller_client/', formData, {
         headers: {
@@ -64,7 +115,7 @@ const Emicalcdashboard = () => {
 
   // Handle file input change (for Aadhar and PAN cards)
   const handleFileChange = (e) => {
-    setEnrollmentData({ ...enrollmentData, [e.target.name]: e.target.files[0] });
+    setEnrollmentData({ ...enrollmentData, [e.target.name]: e.target.files?.[0] });
   };
 
   return (
@@ -117,8 +168,25 @@ const Emicalcdashboard = () => {
           <input
             type="text"
             placeholder="Pincode"
-            onChange={(e) => setEnrollmentData({ ...enrollmentData, pincode: e.target.value })}
+            value={enrollmentData.pincode}
+            onChange={handlePincodeChange}
           />
+
+          <div className="form-group">
+            <label>City:</label>
+            <input type="text" className="form-control" value={city} readOnly />
+          </div>
+
+          <div className="form-group">
+            <label>Country:</label>
+            <input type="text" className="form-control" value={country} readOnly />
+          </div>
+
+          <div className="form-group">
+            <label>Post Office Name:</label>
+            <input type="text" className="form-control" value={postOfficeName} readOnly />
+          </div>
+
           <input
             type="number"
             placeholder="Mobile Number"
@@ -138,16 +206,8 @@ const Emicalcdashboard = () => {
       {showDocumentPopup && (
         <div className="popup">
           <h3>Document Upload</h3>
-          <input
-            type="file"
-            name="adhar_card"
-            onChange={handleFileChange}
-          />
-          <input
-            type="file"
-            name="pan_card"
-            onChange={handleFileChange}
-          />
+          <input type="file" name="adhar_card" onChange={handleFileChange} />
+          <input type="file" name="pan_card" onChange={handleFileChange} />
           <button onClick={handleEnrollmentSubmit}>Submit</button>
         </div>
       )}

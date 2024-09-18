@@ -1,0 +1,105 @@
+[
+    {
+      "city": "New York",
+      "country": "USA",
+      "postOfficeName": "Manhattan",
+      "pincode": "10001"
+    },
+    {
+      "city": "Los Angeles",
+      "country": "USA",
+      "postOfficeName": "Hollywood",
+      "pincode": "90028"
+    },
+    {
+      "city": "Toronto",
+      "country": "Canada",
+      "postOfficeName": "Downtown",
+      "pincode": "M5H 2N2"
+    },
+    {
+      "city": "Vancouver",
+      "country": "Canada",
+      "postOfficeName": "Gastown",
+      "pincode": "V6B 1A1"
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Airground 1 Highground SO",
+      "pincode":"140306"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Aerdrone SO123",
+      "pincode":"160003"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Aerodrone SO ",
+      "pincode":"160004"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Airforce Highground SO",
+      "pincode":"160017"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"APTMO Chandigarh",
+      "pincode":"160017"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Central Sub Division",
+      "pincode":"160017"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Chandigarh  BNPL SP HSD",
+      "pincode":"160017"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Chandigarh GPO",
+      "pincode":"160017"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Chandigarh  Sector 55 SO",
+      "pincode":"160055"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Ind Area Chandigarh SO",
+      "pincode":"160002"
+
+    },
+    {
+      "city":"Chandigarh",
+      "country":"India",
+      "postOfficeName":"Kaimbwala B.O",
+      "pincode":"160001"
+
+    }
+  
+  ]
+  
